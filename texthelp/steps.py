@@ -347,3 +347,37 @@ class ReplaceUsernames:
 
     def explain(self):
         return "Remove usernames from a sentence | Replace with: {}".format(self.replace_with)
+
+class RemoveUnicode:
+    """
+    A class to remove unicode characters from a words in a sentence. 
+    Removes values below and above a user defined threshold or removes specific unicode characters provided by the user.
+
+    Expected input: list of words
+    Expected output: list of words
+
+    Example:
+    >>> remover = RemoveUnicode(unicode_below=50, unicode_above=200)
+    >>> remover.process(['this', 'is', 'a', 'test', '👍'])
+    ['this', 'is', 'a', 'test']
+    """
+    def __init__(self, unicode_below=None, unicode_above=None, remove_unicode=[]):
+        self.unicode_below = unicode_below
+        self.unicode_above = unicode_above
+        if unicode_below is None and unicode_above is None and len(remove_unicode) == 0:
+            raise ValueError("At least one of unicode_below or unicode_above or remove_unicode must be defined.")
+
+    def process(self, text):
+        new_text = []
+        for word in text:
+            if self.unicode_below is not None:
+                word = ''.join([char for char in word if ord(char) >= self.unicode_below])
+            if self.unicode_above is not None:
+                word = ''.join([char for char in word if ord(char) <= self.unicode_above])
+            if len(self.remove_unicode) > 0:
+                word = ''.join([char for char in word if char not in self.remove_unicode])
+            new_text.append(word)
+        return new_text
+
+    def explain(self):
+        return f"Remove unicode characters from a sentence | Unicode below: {self.unicode_below} | Unicode above: {self.unicode_above} | Remove unicode: {self.remove_unicode}"
