@@ -25,5 +25,16 @@ pipeline = Pipeline([
 # Process text
 text = ['.', 'this', 'is', 'a', '.', 'test', '.', '....', '99a']
 print(pipeline.process(text))
+
+# Output:
+['this', 'is', 'a', 'test']
+
 print(pipeline.explain())
+
+# Output:
+Step 1: Remove all punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+Step 2: Remove all non alphabetic characters from a list of words
+Step 3: Remove all non alphabetic characters from a list of words
+Step 4: Remove tokens with majority non alphabetic characters from a list of words | Threshold: 0.5
+Enjoy!
 ```
