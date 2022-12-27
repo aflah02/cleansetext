@@ -1,5 +1,7 @@
 import nltk
 import emoji
+import re
+import string
 
 class StopWordsRemover:
     """
@@ -261,3 +263,87 @@ class RemoveTokensWithMajorityNonAlphabeticCharacters:
 
     def explain(self):
         return f"Remove tokens with majority non alphabetic characters from a list of words | Threshold: {self.threshold}"
+
+def findURLsandHTML(sentence):
+  falsePositiveIndicators = ['but', 'don', 'we', 'what', 'you', 'night', 'since', 'especially', 'keep', 'lol', 'and', 'last']
+  falsePositiveIndicatorsRegex = re.compile(r'^(' + r'|'.join(falsePositiveIndicators) + r')$', re.IGNORECASE)
+  urls = re.findall("(?:http://|https://)?[A-Za-z0-9_]+\.[a-z][A-Za-z0-9_]{1,}[\.A-Za-z0-9_]*[/?[A-Za-z0-9_~]*]*\.?[A-Za-z0-9_]*\\b", sentence)
+  all_urls = []
+  for url in urls:
+    dummy = re.split("\.", url)
+    shouldAdd = True
+    for comps in dummy:
+      if (re.search(falsePositiveIndicatorsRegex, comps) or re.search("^[0-9_]*$", comps)):
+        shouldAdd = False
+    if shouldAdd:
+      all_urls.append(url)
+  if re.search("&quot;", sentence):
+    all_urls.append("&quot;")
+  if re.search("&amp;", sentence):
+    all_urls.append("&amp;")
+  if re.search("&lt;", sentence):
+    all_urls.append("&lt;")
+  return all_urls
+
+class ReplaceURLsandHTMLTags:
+    """
+    A class to remove URLs and HTML tags from a sentence.
+
+    Expected input: list of words
+    Expected output: list of words
+
+    Example:
+    >>> remover = RemoveURLsandHTMLTags()
+    >>> remover.process(['this', 'is', 'a', 'test', 'google.com'])
+    ['this', 'is', 'a', 'test', '<URL>']
+    """
+    def __init__(self, replace_with="<URL>"):
+        self.replace_with = replace_with
+
+    def process(self, text):
+        new_text = []
+        for word in text:
+            all_urls = findURLsandHTML(word)
+            if len(all_urls) == 0:
+                new_text.append(word)
+            else:
+                for url in all_urls:
+                    word = word.replace(url, self.replace_with)
+                new_text.append(word)
+        return new_text
+
+    def explain(self):
+        return "Remove URLs and HTML tags from a sentence | Replace with: {}".format(self.replace_with)
+
+def findUsernames(sentence):
+  return re.findall("[^\wÀ-ÖØ-öø-ÿ@_]?(@[A-Za-z0-9_])\\b", sentence)
+
+class ReplaceUsernames:
+    """
+    A class to remove usernames from a sentence.
+
+    Expected input: list of words
+    Expected output: list of words
+
+    Example:
+    >>> remover = ReplaceUsernames()
+    >>> remover.process(['this', 'is', 'a', 'test', '@user'])
+    ['this', 'is', 'a', 'test', '<USER>']
+    """
+    def __init__(self, replace_with="<USER>"):
+        self.replace_with = replace_with
+
+    def process(self, text):
+        new_text = []
+        for word in text:
+            all_usernames = findUsernames(word)
+            if len(all_usernames) == 0:
+                new_text.append(word)
+            else:
+                for username in all_usernames:
+                    word = word.replace(username, self.replace_with)
+                new_text.append(word)
+        return new_text
+
+    def explain(self):
+        return "Remove usernames from a sentence | Replace with: {}".format(self.replace_with)
