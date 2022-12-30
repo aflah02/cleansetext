@@ -17,17 +17,26 @@ pipeline = Pipeline([
 text = "@Mary I hate you    and everything about you ...... 🎉🎉 google.com"
 text = tk.tokenize(text)
 
+print(text)
+# Output: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', '🎉', '🎉', 'google.com']
+
 print(pipeline.process(text))
 
 # Output:
-# ['this', 'is', 'a', 'test']
+# ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
 
 pipeline.explain(show_diffs=True)
 
 # Output:
-# Step 1: Remove all punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-# Diff: ['.', 'this', 'is', 'a', '.', 'test', '.', '....', '99a'] -> ['this', 'is', 'a', 'test', '....', '99a']
-# Step 2: Remove all non alphabetic characters from a list of words
-# Diff: ['this', 'is', 'a', 'test', '....', '99a'] -> ['this', 'is', 'a', 'test']
-# Step 3: Remove tokens with majority non alphabetic characters from a list of words | Threshold: 0.5
-# Diff: ['this', 'is', 'a', 'test'] -> ['this', 'is', 'a', 'test']
+# Step 1: Remove emojis from text | Language: en
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', '🎉', '🎉', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com']
+# Step 2: Remove all punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com']
+# Step 3: Remove tokens with only punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', 'google.com']
+# Step 4: Remove URLs and HTML tags from a sentence | Replace with: <URL>
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
+# Step 5: Remove usernames from a sentence | Replace with: <USER>
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>'] -> ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
+# Step 6: Remove whitespace from a sentence or chunks of whitespace
+# Diff: ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>'] -> ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
