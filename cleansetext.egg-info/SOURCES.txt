@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+cleansetext/__init__.py
+cleansetext/pipeline.py
+cleansetext/steps.py
+cleansetext/test.py
+cleansetext.egg-info/PKG-INFO
+cleansetext.egg-info/SOURCES.txt
+cleansetext.egg-info/dependency_links.txt
+cleansetext.egg-info/top_level.txt
