@@ -8,6 +8,10 @@ Honestly there are several packages out there which do similar things, but they'
 
 The API design is made to be readable, and I don't hesitate to create functions even for trivial tasks as they make reaching the goal easier.
 
+## How to Install?
+
+`pip install cleansetext`
+
 ## Sample usage
 
 ```
