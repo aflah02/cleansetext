@@ -15,8 +15,8 @@ The API design is made to be readable, and I don't hesitate to create functions 
 ## Sample usage
 
 ```
-from pipeline import Pipeline
-from steps import *
+from cleansetext.pipeline import Pipeline
+from cleansetext.steps import *
 
 # Create a pipeline with a list of preprocessing steps
 pipeline = Pipeline([

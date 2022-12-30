@@ -381,3 +381,29 @@ class RemoveUnicode:
 
     def explain(self):
         return f"Remove unicode characters from a sentence | Unicode below: {self.unicode_below} | Unicode above: {self.unicode_above} | Remove unicode: {self.remove_unicode}"
+
+class RemoveWhiteSpaceOrChunksOfWhiteSpace:
+    """
+    A class to remove whitespace from a sentence or chunks of whitespace.
+
+    Expected input: list of words
+    Expected output: list of words
+
+    Example:
+    >>> remover = RemoveWhiteSpaceOrChunksOfWhiteSpace()
+    >>> remover.process(['this', 'is', 'a', ' ', 'test', '     '])
+    ['this', 'is', 'a', 'test']
+    """
+    def __init__(self):
+        pass
+
+    def process(self, text):
+        new_text = []
+        for word in text:
+            if len(word) == word.count(" "):
+                continue
+            new_text.append(word)
+        return new_text
+    
+    def explain(self):
+        return "Remove whitespace from a sentence or chunks of whitespace"
