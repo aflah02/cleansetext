@@ -1,15 +1,22 @@
-from cleansetext.pipeline import Pipeline
-from cleansetext.steps import *
+from pipeline import Pipeline
+from steps import *
+from nltk.tokenize import TweetTokenizer
+tk = TweetTokenizer()
 
 # Create a pipeline with a list of preprocessing steps
 pipeline = Pipeline([
+    RemoveEmojis(),
     RemoveAllPunctuations(),
-    RemoveAllNonAlphabeticCharacters(),
-    RemoveTokensWithMajorityNonAlphabeticCharacters(),
+    RemoveTokensWithOnlyPunctuations(),
+    ReplaceURLsandHTMLTags(),
+    ReplaceUsernames(),
+    RemoveWhiteSpaceOrChunksOfWhiteSpace()
 ], track_diffs=True)
 
 # Process text
-text = ['.', 'this', 'is', 'a', '.', 'test', '.', '....', '99a']
+text = "@Mary I hate you    and everything about you ...... 🎉🎉 google.com"
+text = tk.tokenize(text)
+
 print(pipeline.process(text))
 
 # Output:
