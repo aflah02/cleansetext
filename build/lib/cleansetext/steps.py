@@ -96,7 +96,13 @@ class RemoveEmojis:
             self.ignored_emojis = set(self.ignored_emojis)
         else:
             self.ignored_emojis = set()
-        return [word for word in text if word not in self.ignored_emojis and emoji.demojize(word, language=self.language) == word]
+        
+        new_text = []
+        for word in text:
+            if emoji.demojize(word, language=self.language) != word and word not in self.ignored_emojis:
+                continue
+            new_text.append(word)
+        return new_text
 
     def explain(self):
         return f"Remove emojis from text | Language: {self.language}"
@@ -316,7 +322,7 @@ class ReplaceURLsandHTMLTags:
         return "Remove URLs and HTML tags from a sentence | Replace with: {}".format(self.replace_with)
 
 def findUsernames(sentence):
-  return re.findall("[^\wÀ-ÖØ-öø-ÿ@_]?(@[A-Za-z0-9_])\\b", sentence)
+  return re.findall("(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9_]+)", sentence)
 
 class ReplaceUsernames:
     """
@@ -341,7 +347,7 @@ class ReplaceUsernames:
                 new_text.append(word)
             else:
                 for username in all_usernames:
-                    word = word.replace(username, self.replace_with)
+                    word = word.replace('@' + username, self.replace_with)
                 new_text.append(word)
         return new_text
 
@@ -381,3 +387,29 @@ class RemoveUnicode:
 
     def explain(self):
         return f"Remove unicode characters from a sentence | Unicode below: {self.unicode_below} | Unicode above: {self.unicode_above} | Remove unicode: {self.remove_unicode}"
+
+class RemoveWhiteSpaceOrChunksOfWhiteSpace:
+    """
+    A class to remove whitespace from a sentence or chunks of whitespace.
+
+    Expected input: list of words
+    Expected output: list of words
+
+    Example:
+    >>> remover = RemoveWhiteSpaceOrChunksOfWhiteSpace()
+    >>> remover.process(['this', 'is', 'a', ' ', 'test', '     '])
+    ['this', 'is', 'a', 'test']
+    """
+    def __init__(self):
+        pass
+
+    def process(self, text):
+        new_text = []
+        for word in text:
+            if len(word) == word.count(" "):
+                continue
+            new_text.append(word)
+        return new_text
+    
+    def explain(self):
+        return "Remove whitespace from a sentence or chunks of whitespace"

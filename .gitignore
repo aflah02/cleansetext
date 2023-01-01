@@ -1,1 +1,9 @@
 cleansetext/__pycache__/
+dist/  # build artifacts
+*.egg-info/  # egg metadata
+*.egg/  # egg file
+*.pyc  # compiled python files
+*.pyo  # compiled python files
+*.pyd  # compiled python files
+*.so  # compiled python files
+build/  # build artifacts

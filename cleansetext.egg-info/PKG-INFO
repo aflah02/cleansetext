@@ -1,18 +1,34 @@
 Metadata-Version: 2.1
 Name: cleansetext
-Version: 0.0.5
-Summary: A package to help quickly clean text data
+Version: 0.0.7
+Summary: A Python library for cleaning text data
 Home-page: https://github.com/aflah02/cleansetext
 Author: Aflah
 Author-email: aflahkhan.2020@gmail.com
-Classifier: Programming Language :: Python :: 3
+License: MIT
+Platform: UNKNOWN
 Classifier: License :: OSI Approved :: MIT License
-Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Operating System :: Unix
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: MacOS
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Software Development
+Classifier: Topic :: Text Processing
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
 # CleanseText
+
+NOTE: THE LIBRARY IS CURRENTLY PRERELEASE AND SEVERAL FEATURES MIGHT STILL BE BROKEN
 
 This is a simple library to help you clean your textual data.
 
@@ -31,28 +47,47 @@ The API design is made to be readable, and I don't hesitate to create functions 
 ```
 from cleansetext.pipeline import Pipeline
 from cleansetext.steps import *
+from nltk.tokenize import TweetTokenizer
+tk = TweetTokenizer()
 
 # Create a pipeline with a list of preprocessing steps
 pipeline = Pipeline([
+    RemoveEmojis(),
     RemoveAllPunctuations(),
-    RemoveAllNonAlphabeticCharacters(),
-    RemoveTokensWithMajorityNonAlphabeticCharacters(),
+    RemoveTokensWithOnlyPunctuations(),
+    ReplaceURLsandHTMLTags(),
+    ReplaceUsernames(),
+    RemoveWhiteSpaceOrChunksOfWhiteSpace()
 ], track_diffs=True)
 
 # Process text
-text = ['.', 'this', 'is', 'a', '.', 'test', '.', '....', '99a']
+text = "@Mary I hate you    and everything about you ...... ðŸŽ‰ðŸŽ‰ google.com"
+text = tk.tokenize(text)
+
+print(text)
+# Output: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'ðŸŽ‰', 'ðŸŽ‰', 'google.com']
+
 print(pipeline.process(text))
 
 # Output:
-# ['this', 'is', 'a', 'test']
+# ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
 
 pipeline.explain(show_diffs=True)
 
 # Output:
-# Step 1: Remove all punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-# Diff: ['.', 'this', 'is', 'a', '.', 'test', '.', '....', '99a'] -> ['this', 'is', 'a', 'test', '....', '99a']
-# Step 2: Remove all non alphabetic characters from a list of words
-# Diff: ['this', 'is', 'a', 'test', '....', '99a'] -> ['this', 'is', 'a', 'test']
-# Step 3: Remove tokens with majority non alphabetic characters from a list of words | Threshold: 0.5
-# Diff: ['this', 'is', 'a', 'test'] -> ['this', 'is', 'a', 'test']
+# Step 1: Remove emojis from text | Language: en
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'ðŸŽ‰', 'ðŸŽ‰', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com']
+# Step 2: Remove all punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com']
+# Step 3: Remove tokens with only punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '...', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', 'google.com']
+# Step 4: Remove URLs and HTML tags from a sentence | Replace with: <URL>
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', 'google.com'] -> ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
+# Step 5: Remove usernames from a sentence | Replace with: <USER>
+# Diff: ['@Mary', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>'] -> ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
+# Step 6: Remove whitespace from a sentence or chunks of whitespace
+# Diff: ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>'] -> ['<USER>', 'I', 'hate', 'you', 'and', 'everything', 'about', 'you', '<URL>']
+
 ```
+
+
