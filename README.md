@@ -1,7 +1,5 @@
 # CleanseText
 
-NOTE: THE LIBRARY IS CURRENTLY PRERELEASE AND SEVERAL FEATURES MIGHT STILL BE BROKEN
-
 This is a simple library to help you clean your textual data.
 
 ## Why do I need this?
