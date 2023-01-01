@@ -5,17 +5,21 @@ import string
 
 class StopWordsRemover:
     """
-    A class to remove stopwords from a text.
+    A class to remove stopwords from a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
+    Args:
+        ignore_case (bool): If set to True, ignore the case of the words when comparing them to the stopwords list. Default is True.
+        ignored_stopwords (list): A list of stopwords that should not be removed from the input text, even if they are in the stopwords list. Default is an empty list.
+        include_stopwords (list): A list of additional stopwords to include in the stopwords list. Default is an empty list.
+        language (str): The language of the stopwords list to use. Default is 'english'.
 
     Example:
-    >>> remover = StopWordsRemover()
-    >>> remover.process(['this', 'is', 'a', 'test'])
-    ['test']
+        remover = StopWordsRemover()
+        remover.process(['this', 'is', 'a', 'test'])
+        >> ['test']
     """
     def __init__(self, ignore_case=True, ignored_stopwords=None, include_stopwords=None, language='english'):
+        """Initialize the StopWordsRemover instance with the given parameters."""
         nltk.download('stopwords')
         self.stopwords = set(nltk.corpus.stopwords.words(language))
         self.ignore_case = ignore_case
@@ -25,6 +29,15 @@ class StopWordsRemover:
         self.language = language
 
     def process(self, text):
+        """
+        Remove stopwords from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with stopwords removed.
+        """
         if self.ignore_case:
             text_copy = [word.lower() for word in text]
         new_words = []
@@ -36,66 +49,117 @@ class StopWordsRemover:
         return new_words
 
     def explain(self):
+        """
+        Return a string explanation of the current stopwords removal configuration.
+
+        Returns:
+            str: A string explanation of the current stopwords removal configuration.
+        """
         return f"Remove stopwords from text | Ignore case: {self.ignore_case} | Ignored stopwords: {self.ignored_stopwords} | Language: {self.language}"
+
 
 class EmojiToText:
     """
-    A class to remove emojis from a text.
+    A class to replace emojis in a list of words with text equivalents.
 
-    Expected input: list of words
-    Expected output: list of words
+    Args:
+        language (str): The language of the text. Default is 'en'.
 
     Example:
-    >>> emoji_to_text = EmojiToText()
-    >>> emoji_to_text.process(['this', 'is', 'a', 'test', '🤔'])
-    ['this', 'is', 'a', 'test', ':thinking_face:']
+        emoji_to_text = EmojiToText()
+        emoji_to_text.process(['this', 'is', 'a', 'test', '🤔'])
+        >> ['this', 'is', 'a', 'test', ':thinking_face:']
     """
     def __init__(self, language='en'):
+        """Initialize the EmojiToText instance with the given language."""
         self.language = language
 
     def process(self, text):
+        """
+        Replace emojis in a list of words with text equivalents.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with emojis replaced with text equivalents.
+        """
         return [emoji.demojize(word, language=self.language) if emoji.demojize(word, language=self.language) != word else word for word in text]
 
     def explain(self):
+        """
+        Return a string explanation of the current emoji replacement configuration.
+
+        Returns:
+            str: A string explanation of the current emoji replacement configuration.
+        """
         return f"Replace emojis with text | Language: {self.language}"
+
 
 class TextToEmoji:
     """
-    A class to replace text with emojis.
+    A class to replace text with emojis in a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
+    Args:
+        language (str): The language of the text. Default is 'en'.
 
     Example:
-    >>> text_to_emoji = TextToEmoji()
-    >>> text_to_emoji.process(['this', 'is', 'a', 'test', ':thinking_face:'])
-    ['this', 'is', 'a', 'test', '🤔']
+        text_to_emoji = TextToEmoji()
+        text_to_emoji.process(['this', 'is', 'a', 'test', ':thinking_face:'])
+        >> ['this', 'is', 'a', 'test', '🤔']
     """
     def __init__(self, language='en'):
+        """Initialize the TextToEmoji instance with the given language."""
         self.language = language
 
     def process(self, text):
+        """
+        Replace text with emojis in a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with text replaced with emojis.
+        """
         return [emoji.emojize(word, language=self.language) if emoji.emojize(word, language=self.language) != word else word for word in text]
 
     def explain(self):
+        """
+        Return a string explanation of the current text replacement configuration.
+
+        Returns:
+            str: A string explanation of the current text replacement configuration.
+        """
         return f"Replace text with emojis | Language: {self.language}"
+
 
 class RemoveEmojis:
     """
-    A class to remove emojis from a text.
+    A class to remove emojis from a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
+    Args:
+        ignored_emojis (list): A list of emojis that should not be removed from the input text. Default is an empty list.
 
     Example:
-    >>> remover = RemoveEmojis()
-    >>> remover.process(['this', 'is', 'a', 'test', '🤔'])
-    ['this', 'is', 'a', 'test']
+        remover = RemoveEmojis()
+        remover.process(['this', 'is', 'a', 'test', '🤔'])
+        >> ['this', 'is', 'a', 'test']
     """
     def __init__(self, ignored_emojis=None):
+        """Initialize the RemoveEmojis instance with the given ignored emojis."""
         self.ignored_emojis = ignored_emojis
 
     def process(self, text):
+        """
+        Remove emojis from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with emojis removed.
+        """
         if self.ignored_emojis is not None:
             self.ignored_emojis = set(self.ignored_emojis)
         else:
@@ -109,26 +173,52 @@ class RemoveEmojis:
         return new_text
 
     def explain(self):
+        """
+        Return a string explanation of the current emoji removal configuration.
+
+        Returns:
+            str: A string explanation of the current emoji removal configuration.
+        """
         return f"Remove emojis from text"
+
 
 class RemovePrecedingAndTrailingPunctuations:
     """
     A class to remove punctuations from the beginning and end of a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
+    Args:
+        punctuations (str): A string of punctuation characters to remove. Default is all ASCII punctuation characters.
+        ignore_starting_punctuations (bool): If set to True, do not remove punctuations from the beginning of words. Default is False.
+        ignore_ending_punctuations (bool): If set to True, do not remove punctuations from the end of words. Default is False.
 
     Example:
-    >>> remover = RemovePrecedingAndTrailingPunctuations()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', '.', '.'])
-    ['this', 'is', 'a', 'test']
+        remover = RemovePrecedingAndTrailingPunctuations()
+        remover.process(['.', 'this', 'is', 'a', 'test', '.', '.'])
+        >> ['this', 'is', 'a', 'test']
     """
     def __init__(self, punctuations='!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~', ignore_starting_punctuations=False, ignore_ending_punctuations=False):
+        """
+        Initialize the RemovePrecedingAndTrailingPunctuations instance with the given punctuations and ignore flags.
+        
+        Args:
+            punctuations (str): A string of punctuation characters to remove.
+            ignore_starting_punctuations (bool): If set to True, do not remove punctuations from the beginning of words.
+            ignore_ending_punctuations (bool): If set to True, do not remove punctuations from the end of words.
+        """
         self.punctuations = punctuations
         self.ignore_starting_punctuations = ignore_starting_punctuations
         self.ignore_ending_punctuations = ignore_ending_punctuations
 
     def process(self, text):
+        """
+        Remove punctuations from the beginning and end of a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with punctuations removed from the beginning and end.
+        """
         startPointer = 0
         endPointer = len(text) - 1
         if not self.ignore_starting_punctuations:
@@ -142,45 +232,81 @@ class RemovePrecedingAndTrailingPunctuations:
         return text[startPointer:endPointer+1] 
 
     def explain(self):
+        """
+        Return a string explanation of the current punctuation removal configuration.
+
+        Returns:
+            str: A string explanation of the current punctuation removal configuration.
+        """
         return f"Remove punctuations from the beginning and end of a word | Punctuations: {self.punctuations} | Ignore starting punctuations: {self.ignore_starting_punctuations} | Ignore ending punctuations: {self.ignore_ending_punctuations}"
+
 
 class RemoveAllPunctuations:
     """
     A class to remove all punctuations from a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
+    Args:
+        punctuations (str): A string of punctuation characters to remove. Default is all ASCII punctuation characters.
 
     Example:
-    >>> remover = RemoveAllPunctuations()
-    >>> remover.process(['.', 'this', 'is', 'a', '.', 'test', '.', '.'])
-    ['this', 'is', 'a', 'test']
+        remover = RemoveAllPunctuations()
+        remover.process(['.', 'this', 'is', 'a', '.', 'test', '.', '.'])
+        >> ['this', 'is', 'a', 'test']
     """
     def __init__(self, punctuations='!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'):
+        """
+        Initialize the RemoveAllPunctuations instance with the given punctuation characters.
+
+        Args:
+            punctuations (str): A string of punctuation characters to remove.
+        """
         self.punctuations = punctuations
 
     def process(self, text):
+        """
+        Remove all punctuations from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with all punctuations removed.
+        """
         return [word for word in text if word not in self.punctuations]
 
     def explain(self):
+        """
+        Return a string explanation of the current punctuation removal configuration.
+
+        Returns:
+            str: A string explanation of the current punctuation removal configuration.
+        """
         return f"Remove all punctuations from a list of words | Punctuations: {self.punctuations}"
+
 
 class RemoveAllNonAlphabetOnlyWords:
     """
     A class to remove all non alphabet only words from a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
-
     Example:
-    >>> remover = RemoveAllNonAlphabetOnlyWords()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
-    ['this', 'is', 'a', 'test', '9]
+        remover = RemoveAllNonAlphabetOnlyWords()
+        remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
+        >> ['this', 'is', 'a', 'test', '9]
     """
     def __init__(self):
+        """Initialize the RemoveAllNonAlphabetOnlyWords instance."""
         pass
 
     def process(self, text):
+        """
+        Remove all non alphabet only words from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with all non alphabet only words removed.
+        """
         new_text = []
         for word in text:
             if word.isalpha():
@@ -188,24 +314,38 @@ class RemoveAllNonAlphabetOnlyWords:
         return new_text
 
     def explain(self):
+        """
+        Return a string explanation of the current non alphabet only word removal configuration.
+
+        Returns:
+            str: A string explanation of the current non alphabet only word removal configuration.
+        """
         return "Remove all non alphabet only words from a list of words"
+
 
 class RemoveAllNonAlphanumericOnlyWords:
     """
     A class to remove all non alphanumeric only words from a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
-
     Example:
-    >>> remover = RemoveAllNonAlphanumericOnlyWords()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
-    ['this', 'is', 'a', 'test', '9']
+        remover = RemoveAllNonAlphanumericOnlyWords()
+        remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
+        >> ['this', 'is', 'a', 'test', '9']
     """
     def __init__(self):
+        """Initialize the RemoveAllNonAlphanumericOnlyWords instance."""
         pass
 
     def process(self, text):
+        """
+        Remove all non alphanumeric only words from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with all non alphanumeric only words removed.
+        """
         new_text = []
         for word in text:
             if word.isalnum():
@@ -213,28 +353,49 @@ class RemoveAllNonAlphanumericOnlyWords:
         return new_text
 
     def explain(self):
+        """
+        Return a string explanation of the current non alphanumeric only word removal configuration.
+
+        Returns:
+            str: A string explanation of the current non alphanumeric only word removal configuration.
+        """
         return "Remove all non alphanumeric characters from a list of words"
 
-class RemoveAllNonNumericCharacters:
+
+class RemoveAllNonNumericOnlyWords:
     """
     A class to remove all non numeric characters from a list of words.
 
-    Expected input: list of words
-    Expected output: list of words
-
     Example:
-    >>> remover = RemoveAllNonNumericCharacters()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
-    ['9']
+        remover = RemoveAllNonNumericCharacters()
+        remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
+        >> ['9']
     """
     def __init__(self):
+        """Initialize the RemoveAllNonNumericOnlyWords instance."""
         pass
 
     def process(self, text):
+        """
+        Remove all non numeric characters from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with all non numeric characters removed.
+        """
         return [word for word in text if word.isnumeric()]
 
     def explain(self):
-        return "Remove all non numeric characters from a list of words"
+        """
+        Return a string explanation of the current non numeric only word removal configuration.
+
+        Returns:
+            str: A string explanation of the current non numeric only word removal configuration.
+        """
+        return "Remove all non numeric only words from a list of words"
+
 
 class RemoveTokensWithOnlyPunctuations:
     """
@@ -242,45 +403,83 @@ class RemoveTokensWithOnlyPunctuations:
     This class is useful in cases where the post tokenization you have some words
     which are just punctuations clubbed together.
 
-    Expected input: list of words
-    Expected output: list of words
-
     Example:
-    >>> remover = RemoveTokensWithOnlyPunctuations()
-    >>> remover.process(['.(', 'this', 'is', 'a', 'test', '?.', '....'])
-    ['this', 'is', 'a', 'test']
+        remover = RemoveTokensWithOnlyPunctuations()
+        remover.process(['.(', 'this', 'is', 'a', 'test', '?.', '....'])
+        >> ['this', 'is', 'a', 'test']
     """
     def __init__(self, punctuations='!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'):
+        """
+        Initialize the RemoveTokensWithOnlyPunctuations instance.
+
+        Args:
+            punctuations (str): A string of punctuation characters to remove.
+        """
         self.punctuations = punctuations
 
     def process(self, text):
+        """
+        Remove tokens with only punctuations from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with tokens containing only punctuations removed.
+        """
         return [word for word in text if not all(char in self.punctuations for char in word)]
 
     def explain(self):
+        """
+        Return a string explanation of the current token removal configuration.
+
+        Returns:
+            str: A string explanation of the current token removal configuration.
+        """
         return f"Remove tokens with only punctuations from a list of words | Punctuations: {self.punctuations}"
+
 
 class RemoveTokensWithMajorityNonAlphabeticCharacters:
     """
     A class to remove tokens with majority non alphabetic characters from a list of words.
     This class is useful in cases where the post tokenization you have some words
-    which are dominated by Non Alphabetic Characters.
-
-    Expected input: list of words
-    Expected output: list of words
+    which are dominated by non alphabetic characters.
 
     Example:
-    >>> remover = RemoveTokensWithMajorityNonAlphabeticCharacters()
-    >>> remover.process(['.(', 'this', 'is', 'a', 'test', '?.', '....'])
-    ['this', 'is', 'a', 'test']
+        remover = RemoveTokensWithMajorityNonAlphabeticCharacters()
+        remover.process(['.(', 'this', 'is', 'a', 'test', '?.', '....'])
+        >> ['this', 'is', 'a', 'test']
     """
     def __init__(self, threshold=0.1):
+        """
+        Initialize the RemoveTokensWithMajorityNonAlphabeticCharacters instance.
+
+        Args:
+            threshold (float): A threshold ratio of non alphabetic characters to remove a token.
+        """
         self.threshold = threshold
 
     def process(self, text):
+        """
+        Remove tokens with majority non alphabetic characters from a list of words.
+
+        Args:
+            text (list): A list of words to process.
+
+        Returns:
+            list: A list of words with tokens containing majority non alphabetic characters removed.
+        """
         return [word for word in text if not (len(word) - sum(char.isalpha() for char in word))/len(word) > self.threshold]
 
     def explain(self):
+        """
+        Return a string explanation of the current token removal configuration.
+
+        Returns:
+            str: A string explanation of the current token removal configuration.
+        """
         return f"Remove tokens with majority non alphabetic characters from a list of words | Threshold: {self.threshold}"
+
 
 def findURLsandHTML(sentence):
   falsePositiveIndicators = ['but', 'don', 'we', 'what', 'you', 'night', 'since', 'especially', 'keep', 'lol', 'and', 'last']

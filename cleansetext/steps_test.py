@@ -166,21 +166,21 @@ def test_explain_RemoveAllPunctuations():
     expected_output = """Remove all punctuations from a list of words | Punctuations: !"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"""
     assert remover.explain() == expected_output
 
-## RemoveAllNonNumericCharacters
+## RemoveAllNonNumericOnlyWords
 
-def test_non_numeric_characters_removed_RemoveAllNonNumericCharacters():
-    remover = RemoveAllNonNumericCharacters()
+def test_non_numeric_characters_removed_RemoveAllNonNumericOnlyWords():
+    remover = RemoveAllNonNumericOnlyWords()
     text = ['.', 'this', 'is', 'a', 'test', '9', '🤔']
     assert remover.process(text) == ['9']
 
-def test_no_numeric_characters_RemoveAllNonNumericCharacters():
-    remover = RemoveAllNonNumericCharacters()
+def test_no_numeric_characters_RemoveAllNonNumericOnlyWords():
+    remover = RemoveAllNonNumericOnlyWords()
     text = ['.', 'this', 'is', 'a', 'test', '🤔']
     assert remover.process(text) == []
 
-def test_explain_RemoveAllNonNumericCharacters():
-    remover = RemoveAllNonNumericCharacters()
-    expected_output = "Remove all non numeric characters from a list of words"
+def test_explain_RemoveAllNonNumericOnlyWords():
+    remover = RemoveAllNonNumericOnlyWords()
+    expected_output = "Remove all non numeric only words from a list of words"
     assert remover.explain() == expected_output
 
 ## RemoveTokensWithOnlyPunctuations
