@@ -1,5 +1,8 @@
 # CleanseText
 
+![](https://github.com/aflah02/cleansetext/actions/workflows/python-publish.yml/badge.svg)
+![](https://github.com/aflah02/cleansetext/actions/workflows/python-package.yml/badge.svg)
+
 This is a simple library to help you clean your textual data.
 
 ## Why do I need this?
