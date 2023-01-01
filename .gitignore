@@ -7,3 +7,11 @@ dist/  # build artifacts
 *.pyd  # compiled python files
 *.so  # compiled python files
 build/  # build artifacts
+cleansetext.egg-info/ # egg metadata
+dist/cleansetext-0.0.7-py3-none-any.whl
+dist/cleansetext-0.0.7.tar.gz
+cleansetext.egg-info/PKG-INFO
+cleansetext.egg-info/dependency_links.txt
+cleansetext.egg-info/requires.txt
+cleansetext.egg-info/SOURCES.txt
+cleansetext.egg-info/top_level.txt
