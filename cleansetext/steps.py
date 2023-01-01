@@ -16,6 +16,7 @@ class StopWordsRemover:
     ['test']
     """
     def __init__(self, ignore_case=True, ignored_stopwords=None, include_stopwords=None, language='english'):
+        nltk.download('stopwords')
         self.stopwords = set(nltk.corpus.stopwords.words(language))
         self.ignore_case = ignore_case
         self.ignored_stopwords = set(ignored_stopwords) if ignored_stopwords else set()
@@ -24,7 +25,6 @@ class StopWordsRemover:
         self.language = language
 
     def process(self, text):
-        nltk.download('stopwords')
         if self.ignore_case:
             text_copy = [word.lower() for word in text]
         new_words = []
