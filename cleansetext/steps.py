@@ -15,20 +15,24 @@ class StopWordsRemover:
     >>> remover.process(['this', 'is', 'a', 'test'])
     ['test']
     """
-    def __init__(self, ignore_case=True, ignored_stopwords=None, language='english'):
+    def __init__(self, ignore_case=True, ignored_stopwords=None, include_stopwords=None, language='english'):
         self.stopwords = set(nltk.corpus.stopwords.words(language))
         self.ignore_case = ignore_case
-        self.ignored_stopwords = ignored_stopwords
+        self.ignored_stopwords = set(ignored_stopwords) if ignored_stopwords else set()
+        self.include_stopwords = set(include_stopwords) if include_stopwords else set()
+        self.all_stopwords = self.stopwords.union(set(self.include_stopwords)) if self.include_stopwords else self.stopwords
         self.language = language
 
     def process(self, text):
         if self.ignore_case:
-            text = [word.lower() for word in text]
-        if self.ignored_stopwords is not None:
-            self.ignored_stopwords = set(self.ignored_stopwords)
-        else:
-            self.ignored_stopwords = set()
-        return [word for word in text if word not in self.stopwords.difference(self.ignored_stopwords)]
+            text_copy = [word.lower() for word in text]
+        new_words = []
+        for word in text_copy:
+            if word in self.all_stopwords:
+                if word not in self.ignored_stopwords:
+                    continue
+            new_words.append(word)
+        return new_words
 
     def explain(self):
         return f"Remove stopwords from text | Ignore case: {self.ignore_case} | Ignored stopwords: {self.ignored_stopwords} | Language: {self.language}"
@@ -49,7 +53,7 @@ class EmojiToText:
         self.language = language
 
     def process(self, text):
-        return [emoji.demojize(word) if emoji.demojize(word, language=self.language) != word else word for word in text]
+        return [emoji.demojize(word, language=self.language) if emoji.demojize(word, language=self.language) != word else word for word in text]
 
     def explain(self):
         return f"Replace emojis with text | Language: {self.language}"
@@ -70,7 +74,7 @@ class TextToEmoji:
         self.language = language
 
     def process(self, text):
-        return [emoji.emojize(word) if emoji.emojize(word, language=self.language) != word else word for word in text]
+        return [emoji.emojize(word, language=self.language) if emoji.emojize(word, language=self.language) != word else word for word in text]
 
     def explain(self):
         return f"Replace text with emojis | Language: {self.language}"
@@ -87,8 +91,7 @@ class RemoveEmojis:
     >>> remover.process(['this', 'is', 'a', 'test', '🤔'])
     ['this', 'is', 'a', 'test']
     """
-    def __init__(self, language='en', ignored_emojis=None):
-        self.language = language
+    def __init__(self, ignored_emojis=None):
         self.ignored_emojis = ignored_emojis
 
     def process(self, text):
@@ -99,13 +102,13 @@ class RemoveEmojis:
         
         new_text = []
         for word in text:
-            if emoji.demojize(word, language=self.language) != word and word not in self.ignored_emojis:
+            if emoji.demojize(word) != word and word not in self.ignored_emojis:
                 continue
             new_text.append(word)
         return new_text
 
     def explain(self):
-        return f"Remove emojis from text | Language: {self.language}"
+        return f"Remove emojis from text"
 
 class RemovePrecedingAndTrailingPunctuations:
     """
@@ -161,44 +164,52 @@ class RemoveAllPunctuations:
     def explain(self):
         return f"Remove all punctuations from a list of words | Punctuations: {self.punctuations}"
 
-class RemoveAllNonAlphabeticCharacters:
+class RemoveAllNonAlphabetOnlyWords:
     """
-    A class to remove all non alphabetic characters from a list of words.
+    A class to remove all non alphabet only words from a list of words.
 
     Expected input: list of words
     Expected output: list of words
 
     Example:
-    >>> remover = RemoveAllNonAlphabeticCharacters()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', 9, '🤔'])
-    ['this', 'is', 'a', 'test']
+    >>> remover = RemoveAllNonAlphabetOnlyWords()
+    >>> remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
+    ['this', 'is', 'a', 'test', '9]
     """
     def __init__(self):
         pass
 
     def process(self, text):
-        return [word for word in text if word.isalpha()]
+        new_text = []
+        for word in text:
+            if word.isalpha():
+                new_text.append(word)
+        return new_text
 
     def explain(self):
-        return "Remove all non alphabetic characters from a list of words"
+        return "Remove all non alphabet only words from a list of words"
 
-class RemoveAllNonAlphanumericCharacters:
+class RemoveAllNonAlphanumericOnlyWords:
     """
-    A class to remove all non alphanumeric characters from a list of words.
+    A class to remove all non alphanumeric only words from a list of words.
 
     Expected input: list of words
     Expected output: list of words
 
     Example:
-    >>> remover = RemoveAllNonAlphanumericCharacters()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', 9, '🤔'])
-    ['this', 'is', 'a', 'test', 9]
+    >>> remover = RemoveAllNonAlphanumericOnlyWords()
+    >>> remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
+    ['this', 'is', 'a', 'test', '9']
     """
     def __init__(self):
         pass
 
     def process(self, text):
-        return [word for word in text if word.isalnum()]
+        new_text = []
+        for word in text:
+            if word.isalnum():
+                new_text.append(word)
+        return new_text
 
     def explain(self):
         return "Remove all non alphanumeric characters from a list of words"
@@ -212,8 +223,8 @@ class RemoveAllNonNumericCharacters:
 
     Example:
     >>> remover = RemoveAllNonNumericCharacters()
-    >>> remover.process(['.', 'this', 'is', 'a', 'test', 9, '🤔'])
-    [9]
+    >>> remover.process(['.', 'this', 'is', 'a', 'test', '9', '🤔'])
+    ['9']
     """
     def __init__(self):
         pass
@@ -261,7 +272,7 @@ class RemoveTokensWithMajorityNonAlphabeticCharacters:
     >>> remover.process(['.(', 'this', 'is', 'a', 'test', '?.', '....'])
     ['this', 'is', 'a', 'test']
     """
-    def __init__(self, threshold=0.5):
+    def __init__(self, threshold=0.1):
         self.threshold = threshold
 
     def process(self, text):
@@ -363,13 +374,14 @@ class RemoveUnicode:
     Expected output: list of words
 
     Example:
-    >>> remover = RemoveUnicode(unicode_below=50, unicode_above=200)
+    >>> remover = RemoveUnicode(unicode_below=10, unicode_above=200)
     >>> remover.process(['this', 'is', 'a', 'test', '👍'])
     ['this', 'is', 'a', 'test']
     """
     def __init__(self, unicode_below=None, unicode_above=None, remove_unicode=[]):
         self.unicode_below = unicode_below
         self.unicode_above = unicode_above
+        self.remove_unicode = remove_unicode
         if unicode_below is None and unicode_above is None and len(remove_unicode) == 0:
             raise ValueError("At least one of unicode_below or unicode_above or remove_unicode must be defined.")
 
