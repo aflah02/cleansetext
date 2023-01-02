@@ -8,7 +8,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="cleansetext",
-    version="1.0.0",
+    version="1.1.0",
     description="A Python library for cleaning text data",
     long_description=README,
     long_description_content_type="text/markdown",
